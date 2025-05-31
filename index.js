@@ -16,11 +16,16 @@ app.get("/api/hello", function (req, res) {
 // ✅ Timestamp API endpoint
 app.get("/api/:date?", function (req, res) {
   let dateString = req.params.date;
-  let date = dateString
-    ? /^\d+$/.test(dateString)
-      ? new Date(parseInt(dateString))
-      : new Date(dateString)
-    : new Date();
+  let date;
+  if (!dateString) {
+    date = new Date();
+  } else if (/^\d+$/.test(dateString)) {
+    // Unix timestamp in milliseconds
+    date = new Date(Number(dateString));
+  } else {
+    // Try parsing as a standard date string
+    date = new Date(dateString);
+  }
 
   if (date.toString() === "Invalid Date") {
     return res.json({ error: "Invalid Date" });
